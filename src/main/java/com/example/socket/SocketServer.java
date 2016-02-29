@@ -81,7 +81,7 @@ public class SocketServer
 				
 				BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 				String userInput;
-				String clientName = socket.getInetAddress().toString();
+				String clientName = socket.getInetAddress().toString()+socket.getPort();
 				DataOutputStream output = new DataOutputStream(socket.getOutputStream());
 				DataInputStream input = new DataInputStream(socket.getInputStream());
 				while(true)
