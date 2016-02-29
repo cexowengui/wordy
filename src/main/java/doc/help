@@ -1,0 +1,5 @@
+1.google的代理：https://google.checkme.com.cn，这个代理可以上google，但是不要从这里上淘宝输入密码什么的
+
+2.httpserver项目：
+2.1.httpserver文档：https://docs.oracle.com/javase/8/docs/jre/api/net/httpserver/spec/
+2.2.例子：http://weli.iteye.com/blog/1545121
