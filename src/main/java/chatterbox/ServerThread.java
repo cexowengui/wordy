@@ -1,46 +1,82 @@
 package chatterbox;
 
 import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.net.Socket;
 
 public class ServerThread implements Runnable {
-	private Socket client;               // Socket connect to client
-	
+	private  Socket client;               // Socket connect to client
+	String clientName;
 	public ServerThread(Socket client) {
 		this.client = client;
 	}
-	public static void handle(Socket client) throws IOException{
-        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));  
-        PrintStream out = new PrintStream(client.getOutputStream());  
-        BufferedReader buf =  new BufferedReader(new InputStreamReader(client.getInputStream()));  
-        
-        boolean flag = true;  
-        while(flag){  
-            System.out.print("输入信息：");  
-            String str = input.readLine();  
-            out.println(str);  
-            if("bye".equals(str)){  
-                flag = false;  
-            }
-            String echo = buf.readLine();  
-            System.out.println(echo);  
-               
-        }  
-        input.close();
-		
+	public void handleConnection(){
+		clientName = client.getInetAddress().toString()+": " +client.getPort();
+        new ReadThread(client).start();
+        new WriteThread(client).start();
 	}
 
 	public void run() {
-		try {
-			handle(client);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		handleConnection();
 	}
 	
 
+	
+	class ReadThread extends Thread {
+		Socket client;
+
+		public ReadThread(Socket socket) {
+			this.client = socket;
+		}
+
+		@Override
+		public void run() {
+			String msg;
+			try {
+				DataInputStream inputStream = new DataInputStream(client.getInputStream());
+				while (true) {
+					msg = inputStream.readUTF();
+					if (msg != null) {
+						System.out.println("收到[" + clientName + "]消息: " + msg);
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+
+	}
+
+	class WriteThread extends Thread {
+		Socket client;
+
+		public WriteThread(Socket socket) {
+			this.client = socket;
+		}
+
+		@Override
+		public void run() {
+			String msg;
+			try {
+				BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+				DataOutputStream outputStream = new DataOutputStream(client.getOutputStream());
+				while (true) {
+					if (in.ready()) {
+						msg = in.readLine();
+						if (msg != null) {
+							outputStream.writeUTF(msg);
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+
+	}
+	
 }
