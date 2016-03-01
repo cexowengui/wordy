@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 
 public class ServerPool {
 	public final static int PORT = 1918;
-	ArrayList<Socket> sockets = new ArrayList<>();
+	ArrayList<Socket> sockets = new ArrayList<Socket>();
 	ServerSocket server;
 	Executor service = Executors.newCachedThreadPool();
 
