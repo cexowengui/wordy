@@ -10,11 +10,7 @@ import java.io.InputStreamReader;
 
 public class SocketServer
 {
-	ArrayList clientList = new ArrayList();
-	//private DataOutputStream output;
-	//private DataInputStream input;
-	//private String clientName;
-	//private Socket socket;
+	ArrayList clientList = new ArrayList();	
 	
 	public static void main(String[] args)
 	{
@@ -49,7 +45,9 @@ public class SocketServer
 		private Socket socket;
 		
 		public readClient(Socket client)
-		{socket = client;}
+		{
+			socket = client;
+		}
 		
 		public void run()
 		{
