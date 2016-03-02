@@ -25,6 +25,7 @@ import com.sun.net.httpserver.spi.HttpServerProvider;
  * java web一般情况下都是用tomcat做服务器，但是我们这里不用这种玩意，自己用jdk自带的包简单实现一个，
  * 也可以用jetty这种极其轻量的包，这里使用自带的com.sun.net.httpserver.HttpServer
  */
+@SuppressWarnings("restriction")
 public class MyHttpServer {
     //启动服务，监听来自客户端的请求
 	public static void httpserverService() throws IOException {
@@ -36,6 +37,7 @@ public class MyHttpServer {
 		System.out.println("server started");
 	}
 	//Http请求处理类
+
 	static class MyHttpHandler implements HttpHandler {
 		public void handle(HttpExchange httpExchange) throws IOException {
 			SimpleDateFormat time=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
