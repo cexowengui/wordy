@@ -1,6 +1,6 @@
 package core.service;
 
-import core.model.RequestDetail;
+
 
 public interface MessageService {
 	/*
