@@ -1,19 +1,18 @@
 package core.main;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
+/*
+ * 2016-03-02 16:45
+ * 目前还是有点问题，server.java启动，然后启动这个包里面的SocketClient.java，偶尔会出现
+ * 客户端的console无法输入第二行数据，关闭重启就会好，暂时不知道什么问题
+ */
+
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class Server {
+public class Server {	
 
-	ArrayList clientList = new ArrayList();
-
-	public static void main(String[] args) {
-		// 在main函数中，启动服务器的socket
+	public static void main(String[] args) {		
 		new Server().OpenServer();
 	}
 

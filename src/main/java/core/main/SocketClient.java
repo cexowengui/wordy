@@ -57,7 +57,7 @@ public class SocketClient {
 				while (true) {
 					if (stdIn.ready()) {
 						userInput = stdIn.readLine();
-						if (userInput != "exit") {
+						if (!userInput.equals("exit")) {
 							output.writeUTF(userInput);
 							System.out.println("已发送消息给【" + clientName + "】" + userInput);
 						}
