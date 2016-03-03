@@ -1,92 +1,93 @@
 package core.model;
 
 /*
- * 这个文件可以不需要了，接收到消息判断第一部分的action，然后转到相应的函数直接解析处理就可以了，没必要又搞一堆类出来
- * 
+ *  
  * 
  */
 
-class RegistryRequest {
-	private String userName;//注册请求必须提供注册的名字，号码系统会自动分配
 
-	public String getUserName() {
-		return userName;
-	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-}
 
-class AddFriendRequest {
-	private String userNum;//用户号码
-	private String friendNum;//想添加的好友号码
+ public class RequestDetail {
+	 public class RegistryRequest {
+			private String userName;//注册请求必须提供注册的名字，号码系统会自动分配
 
-	public String getUserNum() {
-		return userNum;
-	}
+			public String getUserName() {
+				return userName;
+			}
 
-	public void setUserNum(String userNum) {
-		this.userNum = userNum;
-	}
+			public void setUserName(String userName) {
+				this.userName = userName;
+			}
+		}
 
-	public String getFriendNum() {
-		return friendNum;
-	}
+	 public class AddFriendRequest {
+			private String userNum;//用户号码
+			private String friendNum;//想添加的好友号码
 
-	public void setFriendNum(String friendNum) {
-		this.friendNum = friendNum;
-	}
-}
+			public String getUserNum() {
+				return userNum;
+			}
 
-class CreateGroupRequest {
-	private String groupName;//想要创建的组名
+			public void setUserNum(String userNum) {
+				this.userNum = userNum;
+			}
 
-	public String getGroupName() {
-		return groupName;
-	}
+			public String getFriendNum() {
+				return friendNum;
+			}
 
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
-	}
-}
+			public void setFriendNum(String friendNum) {
+				this.friendNum = friendNum;
+			}
+		}
 
-class AddGroupRequest {
-	private String userNum;//用户号码
-	private String groupNum;//群号
+	 public class CreateGroupRequest {
+			private String groupName;//想要创建的组名
 
-	public String getUserNum() {
-		return userNum;
-	}
+			public String getGroupName() {
+				return groupName;
+			}
 
-	public void setUserNum(String userNum) {
-		this.userNum = userNum;
-	}
+			public void setGroupName(String groupName) {
+				this.groupName = groupName;
+			}
+		}
 
-	public String getGroupNum() {
-		return groupNum;
-	}
+	 public class AddGroupRequest {
+			private String userNum;//用户号码
+			private String groupNum;//群号
 
-	public void setGroupNum(String groupNum) {
-		this.groupNum = groupNum;
-	}
-}
+			public String getUserNum() {
+				return userNum;
+			}
 
-class SendMessageRequest {
-	
-	private Message message;//消息体
-	public Message getMessage() {
-		return message;
-	}
+			public void setUserNum(String userNum) {
+				this.userNum = userNum;
+			}
 
-	public void setMessage(Message message) {
-		this.message = message;
-	}
+			public String getGroupNum() {
+				return groupNum;
+			}
 
-}
+			public void setGroupNum(String groupNum) {
+				this.groupNum = groupNum;
+			}
+		}
 
-/*应该没必要需要这样一个大而全类
- * public class RequestDetail {
+	 public class SendMessageRequest {
+			
+			private Message message;//消息体
+			public Message getMessage() {
+				return message;
+			}
+
+			public void setMessage(Message message) {
+				this.message = message;
+			}
+
+		}
+		
 	private int action;
 	private RegistryRequest registryRequest;
 	private AddFriendRequest addFriendRequest;
@@ -131,4 +132,4 @@ class SendMessageRequest {
 		this.sendMessageRequest = sendMessageRequest;
 	}
 
-}*/
+}

@@ -1,8 +1,8 @@
 package core.service;
 
+import core.model.RequestDetail;
 
-
-public interface MessageService {
+public interface MsgParseService {
 	/*
 	 * 客户端和服务器的通信协议有多种方式，业界一般采用长度+消息体的方式，参考：http://blog.csdn.net/lincyang/article/details/6109076
 	 * 这里不适用这种复杂的方式，为了简化，直接用特殊字符作为间隔符，比如服务器接收到的消息如下：
@@ -16,6 +16,6 @@ public interface MessageService {
 	 * 2+123456+234+567 直接判定为非法，抛弃，因为1表示添加好友，后面只会跟两个用户号码，但是并不存在234+567这样的用户号
 	 * 5+123456+234567+1234+2345等于多少  直接解析为用户123456向用户234567发送的消息是1234+2345，最后一个加号不考虑为间隔符，从前往后解析
 	 */
-	public void parseMessage(String message);//解析消息
+	public RequestDetail parseMessage(String message);//解析消息
 
 }

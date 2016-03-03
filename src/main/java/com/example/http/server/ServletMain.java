@@ -13,7 +13,6 @@ public class ServletMain {
         
         //start up
         server.start();
-        server.join();
-        
+        server.join();        
 	}
 }

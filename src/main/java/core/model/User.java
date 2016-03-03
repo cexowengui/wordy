@@ -4,7 +4,7 @@ package core.model;
  */
 public class User {
 	private int id;
-	private String userNum;
+	private int userNum;
 	private String userName;
 	private String userFriends;
 	private String userGroups;
@@ -15,10 +15,10 @@ public class User {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getUserNum() {
+	public int getUserNum() {
 		return userNum;
 	}
-	public void setUserNum(String userNum) {
+	public void setUserNum(int userNum) {
 		this.userNum = userNum;
 	}
 	public String getUserName() {
@@ -44,6 +44,11 @@ public class User {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public String toString(){
+		return String.valueOf(id) + " " + String.valueOf(userNum) 
+		+  " " + userName + " " + userFriends + " " + userGroups+ " " + description;
 	}
 
 }
