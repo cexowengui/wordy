@@ -2,7 +2,8 @@ package core.model;
 
 public class Group {
 	private String id;
-	private String groupNum;
+	private int groupNum;
+	private int owner;	
 	private String groupName;
 	private int groupThreshold;
 	private String description;
@@ -12,11 +13,17 @@ public class Group {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getGroupNum() {
+	public int getGroupNum() {
 		return groupNum;
 	}
-	public void setGroupNum(String groupNum) {
+	public void setGroupNum(int groupNum) {
 		this.groupNum = groupNum;
+	}
+	public int getOwner() {
+		return owner;
+	}
+	public void setOwner(int owner) {
+		this.owner = owner;
 	}
 	public String getGroupName() {
 		return groupName;
@@ -37,6 +44,4 @@ public class Group {
 		this.description = description;
 	}
 	
-	
-
 }

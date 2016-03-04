@@ -1,5 +1,6 @@
 package core.util;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -11,17 +12,17 @@ public class DBHelper {
 	//public static final String url = "jdbc:mysql://127.0.0.1/cloud_message";	
 	//public static final String url = "jdbc:mysql://localhost/cloud_message";
 	
-	public static final String url = "jdbc:mysql://10.166.224.207/cloud_message";
-	public static final String driver = "com.mysql.jdbc.Driver";
-	public static final String user = "root";
-	public static final String password = "ubuntu";
 
 	public Connection conn = null;
 
-	public Connection getConn() {
+	public Connection getConn() throws IOException {
 		try {
-			Class.forName(driver); // classLoader,加载对应驱动
-			conn = (Connection) DriverManager.getConnection(url, user, password);
+			ConfigRead config = new ConfigRead();
+			Class.forName(config.getConfigProperties("jdbc_driver")); 
+			conn = (Connection) DriverManager.getConnection(
+					config.getConfigProperties("jdbc_url"), 
+					config.getConfigProperties("jdbc_user"), 
+					config.getConfigProperties("jdbc_password"));
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {

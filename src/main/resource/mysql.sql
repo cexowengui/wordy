@@ -14,6 +14,7 @@
 5.CREATE TABLE `groups` (  
   `id` int NOT NULL AUTO_INCREMENT,
   `group_num` int  NOT NULL,
+  `owner` int not null COMMENT '群所属的用户，这里应该设置外键，但是为了简单就算了', 
   `group_name` varchar(20),
   `group_threshold` int(8) COMMENT '群组用户数量的上限，超过后无法加入',
   `description` varchar(50),

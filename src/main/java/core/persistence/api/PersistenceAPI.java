@@ -1,5 +1,8 @@
 package core.persistence.api;
 
-public class PersistenceAPI {
+import java.io.IOException;
+
+public interface PersistenceAPI {
+		
 
 }

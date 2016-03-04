@@ -5,9 +5,6 @@ package core.model;
  * 
  */
 
-
-
-
  public class RequestDetail {
 	 public class RegistryRequest {
 			private String userName;//注册请求必须提供注册的名字，号码系统会自动分配
@@ -22,24 +19,22 @@ package core.model;
 		}
 
 	 public class AddFriendRequest {
-			private String userNum;//用户号码
-			private String friendNum;//想添加的好友号码
-
-			public String getUserNum() {
+			private int userNum;//用户号码
+			private int friendNum;//想添加的好友号码
+			public int getUserNum() {
 				return userNum;
 			}
-
-			public void setUserNum(String userNum) {
+			public void setUserNum(int userNum) {
 				this.userNum = userNum;
 			}
-
-			public String getFriendNum() {
+			public int getFriendNum() {
 				return friendNum;
 			}
-
-			public void setFriendNum(String friendNum) {
+			public void setFriendNum(int friendNum) {
 				this.friendNum = friendNum;
 			}
+
+			
 		}
 
 	 public class CreateGroupRequest {
@@ -55,24 +50,22 @@ package core.model;
 		}
 
 	 public class AddGroupRequest {
-			private String userNum;//用户号码
-			private String groupNum;//群号
-
-			public String getUserNum() {
+			private int userNum;//用户号码
+			private int groupNum;//群号
+			public int getUserNum() {
 				return userNum;
 			}
-
-			public void setUserNum(String userNum) {
+			public void setUserNum(int userNum) {
 				this.userNum = userNum;
 			}
-
-			public String getGroupNum() {
+			public int getGroupNum() {
 				return groupNum;
 			}
-
-			public void setGroupNum(String groupNum) {
+			public void setGroupNum(int groupNum) {
 				this.groupNum = groupNum;
 			}
+
+			
 		}
 
 	 public class SendMessageRequest {

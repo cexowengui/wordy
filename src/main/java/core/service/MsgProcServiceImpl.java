@@ -3,7 +3,7 @@ package core.service;
 import java.rmi.registry.Registry;
 
 import core.model.RequestDetail;
-import core.model.ResponseDetai;
+import core.model.ResponseDetail;
 
 public class MsgProcServiceImpl implements MsgProcService {
 
@@ -14,7 +14,7 @@ public class MsgProcServiceImpl implements MsgProcService {
 		return "";
 	}
 	
-	public ResponseDetai Registry(RequestDetail requestDetail){
+	public ResponseDetail Registry(RequestDetail requestDetail){
 		RequestDetail.RegistryRequest registryRequest = requestDetail.getRegistryRequest();
 		
 		return null;

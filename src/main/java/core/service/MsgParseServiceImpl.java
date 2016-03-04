@@ -10,7 +10,7 @@ public class MsgParseServiceImpl implements MsgParseService {
 	 * 
 	 * 2+123456+654321 QQ号码为123456的用户申请添加654321为好友 回复：OK或者FAIL+reason
 	 * 
-	 * 3+group_name 申请创建群组名为group_name的群 回复：OK+234567或者FAIL+reason
+	 * 3+123456+group_name 用户123456申请创建群组名为group_name的群 回复：OK+234567或者FAIL+reason
 	 * 
 	 * 4+123456+234567 QQ号码为123456的用户申请加入群234567 回复：OK或者FAIL+reason
 	 * 
@@ -46,8 +46,8 @@ public class MsgParseServiceImpl implements MsgParseService {
 		RequestDetail.AddFriendRequest  addFriendRequest = 
 				new RequestDetail().new AddFriendRequest();	
 		String[] msgStrings = message.split("\\+");
-		addFriendRequest.setUserNum(msgStrings[1]);;
-		addFriendRequest.setFriendNum(msgStrings[2]);
+		addFriendRequest.setUserNum(Integer.valueOf(msgStrings[1]).intValue());;
+		addFriendRequest.setFriendNum(Integer.valueOf(msgStrings[2]).intValue());
 		RequestDetail requestDetail = new RequestDetail();
 		requestDetail.setAddFriendRequest(addFriendRequest);
 		requestDetail.setAction(Integer.valueOf(msgStrings[0]).intValue());
@@ -69,8 +69,8 @@ public class MsgParseServiceImpl implements MsgParseService {
 		RequestDetail.AddGroupRequest addGroupRequest  = 
 				new RequestDetail().new AddGroupRequest();
 		String[] msgStrings = message.split("\\+");
-		addGroupRequest.setUserNum(msgStrings[1]);
-		addGroupRequest.setGroupNum(msgStrings[2]);
+		addGroupRequest.setUserNum(Integer.valueOf(msgStrings[1]).intValue());
+		addGroupRequest.setGroupNum(Integer.valueOf(msgStrings[2]).intValue());
 		RequestDetail requestDetail = new RequestDetail();
 		requestDetail.setAddGroupRequest(addGroupRequest);
 		requestDetail.setAction(Integer.valueOf(msgStrings[0]).intValue());

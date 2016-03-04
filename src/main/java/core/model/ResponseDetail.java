@@ -1,6 +1,6 @@
 package core.model;
 
-public class ResponseDetai {
+public class ResponseDetail {
 	
 	private String result;//请求的结果，OK或者FAIL
 	private String msg;//有些请求需要返回一些信息，比如注册需要返回注册好的QQ号码
