@@ -5,6 +5,10 @@
  * 还有一个，给自己发信息
  * 以上功能通过不同的jetty handler来实现，主要是ServletHandler ResourcesHandler 。
  * 主要编码地方 url请求映射 页面编写（请求jsp?） api规范 
+ * 
+ * 现在已经可以直接通过url访问到html页面了，这个页面其实是一个html文件，
+ * 下一步，怎么接收和处理html中的ajax请求处理，并返回响应??????
+ * 单个main函数要么处理html，要么处理servlet，是否可以通过jetty的handler链解决？
  */
 /**
  * @author cexowengui
