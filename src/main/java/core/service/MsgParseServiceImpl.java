@@ -6,7 +6,10 @@ import core.util.MessageConstant;
 
 public class MsgParseServiceImpl implements MsgParseService {
 	/*
-	 * 通讯协议定义： 1+user_name 申请注册用户名为user_name的QQ号码 回复：OK+123456或者FAIL+reason
+	 * 通讯协议定义：
+	 * 0+user_name+passwd 申请注册用户名为user_name密码为passwd的QQ号码 回复：OK+123456或者FAIL+reason
+	 * 
+	 * 1+123456+passwd 用户123456用密码passwd登录
 	 * 
 	 * 2+123456+654321 QQ号码为123456的用户申请添加654321为好友 回复：OK或者FAIL+reason
 	 * 
@@ -21,8 +24,9 @@ public class MsgParseServiceImpl implements MsgParseService {
 
 	public RequestDetail parseMessage(String message) {
 		String[] msgStrings = message.split("\\+");//因为+号在正则表达式中有特殊意义，此处需要转义
-		switch (Integer.valueOf(msgStrings[0]).intValue()) {
+		switch (Integer.valueOf(msgStrings[0]).intValue()) {		
 		case MessageConstant.REGISTRY:return parseUserRegistryReq(message);
+		case MessageConstant.LOGIN:return parseUserLoginReq(message);
 		case MessageConstant.ADD_FRIEND:return parseAddFriendReq(message);
 		case MessageConstant.CREATE_GROUP:return parseCreateGroupReq(message);
 		case MessageConstant.ADD_GROUP:return parseAddGroupReq(message);
@@ -30,12 +34,26 @@ public class MsgParseServiceImpl implements MsgParseService {
 		default:return null;
 		}		
 	}
-
+	public RequestDetail parseUserLoginReq(String message) {
+		RequestDetail.LoginRequest loginRequest = new RequestDetail().new LoginRequest();
+		String[] msgStrings = message.split("\\+");
+		loginRequest.setUserNum(Integer.valueOf(msgStrings[1]).intValue());
+		loginRequest.setPasswd(msgStrings[2]);
+		
+		RequestDetail requestDetail = new RequestDetail();
+		requestDetail.setLoginRequest(loginRequest);
+		requestDetail.setAction(Integer.valueOf(msgStrings[0]).intValue());
+		return requestDetail;
+		
+	}
+	
 	public RequestDetail parseUserRegistryReq(String message) {
 		RequestDetail.RegistryRequest registryRequest = 
 				new RequestDetail().new RegistryRequest();	
 		String[] msgStrings = message.split("\\+");
 		registryRequest.setUserName(msgStrings[1]);
+		registryRequest.setUserPasswd(msgStrings[2]);
+		
 		RequestDetail requestDetail = new RequestDetail();
 		requestDetail.setRegistryRequest(registryRequest);
 		requestDetail.setAction(Integer.valueOf(msgStrings[0]).intValue());
@@ -48,6 +66,7 @@ public class MsgParseServiceImpl implements MsgParseService {
 		String[] msgStrings = message.split("\\+");
 		addFriendRequest.setUserNum(Integer.valueOf(msgStrings[1]).intValue());;
 		addFriendRequest.setFriendNum(Integer.valueOf(msgStrings[2]).intValue());
+		
 		RequestDetail requestDetail = new RequestDetail();
 		requestDetail.setAddFriendRequest(addFriendRequest);
 		requestDetail.setAction(Integer.valueOf(msgStrings[0]).intValue());
@@ -59,6 +78,7 @@ public class MsgParseServiceImpl implements MsgParseService {
 				new RequestDetail().new CreateGroupRequest();
 		String[] msgStrings = message.split("\\+");
 		createGroupRequest.setGroupName(msgStrings[1]);
+		
 		RequestDetail requestDetail = new RequestDetail();
 		requestDetail.setCreateGroupRequest(createGroupRequest);
 		requestDetail.setAction(Integer.valueOf(msgStrings[0]).intValue());
@@ -71,6 +91,7 @@ public class MsgParseServiceImpl implements MsgParseService {
 		String[] msgStrings = message.split("\\+");
 		addGroupRequest.setUserNum(Integer.valueOf(msgStrings[1]).intValue());
 		addGroupRequest.setGroupNum(Integer.valueOf(msgStrings[2]).intValue());
+		
 		RequestDetail requestDetail = new RequestDetail();
 		requestDetail.setAddGroupRequest(addGroupRequest);
 		requestDetail.setAction(Integer.valueOf(msgStrings[0]).intValue());
@@ -92,11 +113,11 @@ public class MsgParseServiceImpl implements MsgParseService {
 		}
 		msg.setContent(content);
 		sendMessageRequest.setMessage(msg);
+		
 		RequestDetail requestDetail = new RequestDetail();
 		requestDetail.setSendMessageRequest(sendMessageRequest);
 		requestDetail.setAction(Integer.valueOf(msgStrings[0]).intValue());
 		return requestDetail;
-
 	}
 
 }

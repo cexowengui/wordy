@@ -1,14 +1,23 @@
 package core.main;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+
+import core.model.ClientSocket;
+
+
 /*
  * 2016-03-02 16:45
  * 目前还是有点问题，server.java启动，然后启动这个包里面的SocketClient.java，偶尔会出现
  * 客户端的console无法输入第二行数据，关闭重启就会好，暂时不知道什么问题
  */
 
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
+
+
+
 
 public class Server {	
 
@@ -22,7 +31,12 @@ public class Server {
 			Socket socket;
 			while ((socket = server.accept()) != null) {
 				System.out.println("接收到客户端连接");
-				new ClientHandler(socket).start();				
+				ClientSocket clientSocket = new ClientSocket();
+				clientSocket.setSocket(socket);
+				clientSocket.setInput(new DataInputStream(socket.getInputStream()));
+				clientSocket.setOutput(new DataOutputStream(socket.getOutputStream()));
+				new ClientHandler(clientSocket).start();
+				//new DataInputStream(socket.getInputStream());
 			}
 
 			if (!socket.isClosed()) {

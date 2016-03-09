@@ -4,13 +4,15 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
 
+import core.model.ClientSocket;
+
 import java.io.IOException;
 
 public class ClientHandler extends Thread {
 
-	private Socket clientSocket;
+	private ClientSocket clientSocket;
 
-	public ClientHandler(Socket client) {
+	public ClientHandler(ClientSocket client) {
 		this.clientSocket = client;
 	}
 
@@ -20,9 +22,9 @@ public class ClientHandler extends Thread {
 		DataOutputStream output = null;
 
 		try {
-			String clientName = clientSocket.getInetAddress().toString();			
-			input = new DataInputStream(clientSocket.getInputStream());
-			output = new DataOutputStream(clientSocket.getOutputStream());
+			String clientName = this.clientSocket.getSocket().getInetAddress().toString();			
+			input = this.clientSocket.getInput();
+			output = this.clientSocket.getOutput();			
 			while ((msg = input.readUTF()) != null) {
 				System.out.println("收到消息：【" + clientName + "】 " + msg);
 				/* 
@@ -34,16 +36,16 @@ public class ClientHandler extends Thread {
 				 * 程序发送的，会 非常快，所以我们这里还是开一个处理请求的线程，本线程只负责 消息接受。这样做代价
 				 * 是服务器需要频繁创建销毁线程，所以需要使用线程池。两种方式各有利弊。
 				 */
-				new MessageReplyThread(clientSocket, output, msg).start();
+				new MessageReplyThread(clientSocket, msg).start();
 			}
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		} finally {
 			System.out.println("客户端断开，对应的客户端线程退出");
 			try {
-				input.close();
-				output.close();
-				this.clientSocket.close();
+				this.clientSocket.getInput().close();
+				this.clientSocket.getOutput().close();
+				this.clientSocket.getSocket().close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -52,23 +54,22 @@ public class ClientHandler extends Thread {
 }
 
 class MessageReplyThread extends Thread {
-	private Socket clientSocket;
+	private ClientSocket clientSocket;
 	private String message;
-	private DataOutputStream output;
 
-	public MessageReplyThread(Socket client, DataOutputStream output, String mes) {
-		this.clientSocket = client;
-		this.output = output;
-		this.message = mes;
+	public MessageReplyThread(ClientSocket client, String message) {
+		this.clientSocket = client;		
+		this.message = message;
 	}
 
 	public void run() {		
 		try {
-			String clientName = clientSocket.getInetAddress().toString() + clientSocket.getPort();
+			String clientName = this.clientSocket.getSocket().getInetAddress().toString() + 
+					this.clientSocket.getSocket().getPort();
 			
 			// while (true) {//因为服务器只有收到客户端的请求才会回复消息，不会主动发送消息，所以这不需要while
-			output.writeUTF(message + " reply");
-			output.flush();
+			this.clientSocket.getOutput().writeUTF(message + " reply");
+			this.clientSocket.getOutput().flush();
 			System.out.println("已回复消息给客户端【" + clientName + "】" + message + " reply");
 			// }
 			System.out.println("服务器已经完成客户端请求处理并回复消息给客户端，回复线程退出");	

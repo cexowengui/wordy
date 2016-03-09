@@ -3,8 +3,9 @@
 3.use cloud_message;
 4.CREATE TABLE `users` (  
   `id` int NOT NULL AUTO_INCREMENT,
+  `user_name` varchar(20)  NOT NULL,  
+  `user_passwd` varchar(20)  NOT NULL COMMENT '暂时不考虑加密之类的',  
   `user_num` int  NOT NULL COMMENT '用户QQ号码，这里可以采用注册时间+随机数组成，这样也有利于后面分表',
-  `user_name` varchar(20)  NOT NULL,
   `user_friends` varchar(500) COMMENT '用户的好友都存储在这里，用逗号分隔，用户好友最大限制xx人，避免该字段存不下',
   `user_groups` varchar(200) COMMENT  '用户加入的群组，逗号分隔，比如 12345,23456' ,
   `description` varchar(50) COMMENT '备注信息，有时不想改变表结构但有需要的存储某些信息，派的上用场',

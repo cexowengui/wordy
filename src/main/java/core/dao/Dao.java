@@ -41,17 +41,17 @@ public class Dao {
 		return result;
 	}
 	
-	public ResponseDetail userRegistry(RequestDetail requestDetail) throws SQLException, IOException{
-		String userName = requestDetail.getRegistryRequest().getUserName();		
+	public ResponseDetail userRegistry(RequestDetail requestDetail) throws SQLException, IOException{		
 		int userNum = this.generateUserNum();		
 		DBHelper dbHelper = new DBHelper();
 		Connection conn = (Connection) dbHelper.getConn();
-		String sql = "insert into users (user_num, user_name) values(?,?)";
+		String sql = "insert into users (user_name, user_passwd, user_num) values(?,?,?)";
 		PreparedStatement pstmt = (PreparedStatement)conn.prepareStatement(sql);
-		pstmt.setInt(1, userNum);
-		pstmt.setString(2, userName);
-		pstmt.executeUpdate();	
+		pstmt.setString(1, requestDetail.getRegistryRequest().getUserName());
+		pstmt.setString(2, requestDetail.getRegistryRequest().getUserPasswd());
+		pstmt.setInt(3, userNum);
 		
+		pstmt.executeUpdate();			
 		ResponseDetail res = new ResponseDetail();
 		res.setResult("OK");
 		res.setMsg(String.valueOf(userNum));
@@ -61,7 +61,7 @@ public class Dao {
 	public ResponseDetail userAddFriend(RequestDetail requestDetail) throws SQLException, IOException{
 		int userNum = requestDetail.getAddFriendRequest().getUserNum();
 		int friendNum = requestDetail.getAddFriendRequest().getFriendNum();	
-		User user = this.getUserByUUID(userNum);
+		User user = this.getUserByUserNum(userNum);
 		/*
 		 *这里需要做一些校验，为了省事，我们不考虑非常规流程，比如添加不存在的用户作为好友等		 
 		User user = this.getUserByUUID(userNum);//是否存在这个用户
@@ -86,27 +86,23 @@ public class Dao {
 		res.setResult("OK");		
 		return res;	
 	}
-	
-	public ResponseDetail sendMessage(RequestDetail requestDetail, DataOutputStream output){
-		return null;		
-	} 
-	
 
-	public User getUserByUUID(int user_num) throws SQLException, IOException {
+	public User getUserByUserNum(int user_num) throws SQLException, IOException {
 		DBHelper dbHelper = new DBHelper();
 		Connection conn = (Connection) dbHelper.getConn();
 		String sql = "select * from users where user_num=" + user_num;
 		PreparedStatement pstmt = (PreparedStatement) conn.prepareStatement(sql);
 		ResultSet rs = pstmt.executeQuery();		
 		User user = new User();
-		while (rs.next()) {			
+		rs.next();
+		//while (rs.next()) {	有且只会有一个，不需要循环，在外面执行rs.next()就行了		
 			user.setId(rs.getInt(1));
 			user.setUserNum(rs.getInt(2));
 			user.setUserName(rs.getString(3));
 			user.setUserFriends(rs.getString(4));
 			user.setUserGroups(rs.getString(5));
 			user.setDescription(rs.getString(6));			
-		}
+		//}
 		pstmt.close();
 		dbHelper.close();
 		return user;

@@ -6,6 +6,7 @@ public class User {
 	private int id;
 	private int userNum;
 	private String userName;
+	private String userPasswd;
 	private String userFriends;
 	private String userGroups;
 	private String description;
@@ -49,6 +50,12 @@ public class User {
 	public String toString(){
 		return String.valueOf(id) + " " + String.valueOf(userNum) 
 		+  " " + userName + " " + userFriends + " " + userGroups+ " " + description;
+	}
+	public String getUserPasswd() {
+		return userPasswd;
+	}
+	public void setUserPasswd(String userPasswd) {
+		this.userPasswd = userPasswd;
 	}
 
 }
