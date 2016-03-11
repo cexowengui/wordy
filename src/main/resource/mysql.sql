@@ -21,5 +21,6 @@
   `description` varchar(50),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-6.grant all privileges on *.* to 'root'@'*' identified by '你的密码';
+6.grant all privileges on *.* to 'root'@'*' identified by 'your password';
 7.flush privileges;
+8.exit

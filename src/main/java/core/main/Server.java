@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import core.model.ClientSocket;
+import core.util.ConfigRead;
 
 
 /*
@@ -23,11 +24,18 @@ public class Server {
 
 	public static void main(String[] args) {		
 		new Server().OpenServer();
+		
+		/*启动定时任务线程清理断开的客户端连接，虽然客户端退出会在ClientHandler的finally里面把socket关闭，但是全局变量
+		 * SocketMap里面还保留了client的socket，必须清理掉对于三分钟以上没有心跳更新的socket都清除掉
+		*/
+		new Thread( new CleanInactivateClientThread()).start();		
+		
 	}
+	
 
 	public void OpenServer() {
 		try {
-			ServerSocket server = new ServerSocket(10001);
+			ServerSocket server = new ServerSocket(Integer.valueOf(ConfigRead.getConfigProperties("server_port")).intValue());
 			Socket socket;
 			while ((socket = server.accept()) != null) {
 				System.out.println("接收到客户端连接");
@@ -35,6 +43,7 @@ public class Server {
 				clientSocket.setSocket(socket);
 				clientSocket.setInput(new DataInputStream(socket.getInputStream()));
 				clientSocket.setOutput(new DataOutputStream(socket.getOutputStream()));
+				clientSocket.setUpdateTime(System.currentTimeMillis());
 				new ClientHandler(clientSocket).start();
 				//new DataInputStream(socket.getInputStream());
 			}

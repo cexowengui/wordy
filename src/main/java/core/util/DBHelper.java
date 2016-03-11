@@ -17,12 +17,12 @@ public class DBHelper {
 
 	public Connection getConn() throws IOException {
 		try {
-			ConfigRead config = new ConfigRead();
-			Class.forName(config.getConfigProperties("jdbc_driver")); 
+			//ConfigRead config = new ConfigRead();
+			Class.forName(ConfigRead.getConfigProperties("jdbc_driver")); 
 			conn = (Connection) DriverManager.getConnection(
-					config.getConfigProperties("jdbc_url"), 
-					config.getConfigProperties("jdbc_user"), 
-					config.getConfigProperties("jdbc_password"));
+					ConfigRead.getConfigProperties("jdbc_url"), 
+					ConfigRead.getConfigProperties("jdbc_user"), 
+					ConfigRead.getConfigProperties("jdbc_password"));
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {

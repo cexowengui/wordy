@@ -6,20 +6,8 @@ import core.util.MessageConstant;
 
 public class MsgParseServiceImpl implements MsgParseService {
 	/*
-	 * 通讯协议定义：
-	 * 0+user_name+passwd 申请注册用户名为user_name密码为passwd的QQ号码 回复：OK+123456或者FAIL+reason
-	 * 
-	 * 1+123456+passwd 用户123456用密码passwd登录
-	 * 
-	 * 2+123456+654321 QQ号码为123456的用户申请添加654321为好友 回复：OK或者FAIL+reason
-	 * 
-	 * 3+123456+group_name 用户123456申请创建群组名为group_name的群 回复：OK+234567或者FAIL+reason
-	 * 
-	 * 4+123456+234567 QQ号码为123456的用户申请加入群234567 回复：OK或者FAIL+reason
-	 * 
-	 * 5+123456+654321+123+234 用户123456给用户号码或者群号码为654321发送内容为123+456的消息
-	 * 回复：这种不需要回复，否则太慢 发送消息的协议中，第三部分的数字的意义可能表示用户号码，也可能表示群号，为了避免在
-	 * 消息中再添加别的信息进去，直接在业务开始之初就规定：1-8开头的为用户号码，9开头的为群号
+	 * 通讯协议定义：详细参见 core.util.MessageConstant.java内解释
+	 
 	 */
 
 	public RequestDetail parseMessage(String message) {
@@ -29,7 +17,7 @@ public class MsgParseServiceImpl implements MsgParseService {
 		case MessageConstant.LOGIN:return parseUserLoginReq(message);
 		case MessageConstant.ADD_FRIEND:return parseAddFriendReq(message);
 		case MessageConstant.CREATE_GROUP:return parseCreateGroupReq(message);
-		case MessageConstant.ADD_GROUP:return parseAddGroupReq(message);
+		case MessageConstant.JOIN_GROUP:return parseJoinGroupReq(message);
 		case MessageConstant.SEND_MESSAGE:return parseSendMessageReq(message);
 		default:return null;
 		}		
@@ -85,7 +73,7 @@ public class MsgParseServiceImpl implements MsgParseService {
 		return requestDetail;
 	}
 
-	public RequestDetail parseAddGroupReq(String message) {
+	public RequestDetail parseJoinGroupReq(String message) {
 		RequestDetail.AddGroupRequest addGroupRequest  = 
 				new RequestDetail().new AddGroupRequest();
 		String[] msgStrings = message.split("\\+");
@@ -104,8 +92,13 @@ public class MsgParseServiceImpl implements MsgParseService {
 		String[] msgStrings = message.split("\\+");
 		
 		Message msg = new Message();
-		msg.setFrom(msgStrings[1]);
-		msg.setTo(msgStrings[2]);
+		msg.setFrom(Integer.valueOf(msgStrings[1]).intValue());
+		msg.setTo(Integer.valueOf(msgStrings[2]).intValue());
+		if(msg.getTo() >= 90000){//群消息，因为群都是9开头的,90000为第一个群号
+			msg.setType(MessageConstant.GOURP_MESSAGE_TYPE);
+		}else{
+			msg.setType(MessageConstant.POINT_MESSAGE_TYPE);
+		}
 		
 		String content = "";//从第三部分开始全部作为消息内容看待，不管内容中是否有+号
 		for(int i=3;i < msgStrings.length;i++){

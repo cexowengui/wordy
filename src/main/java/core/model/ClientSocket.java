@@ -9,6 +9,7 @@ public class ClientSocket{
 	private Socket socket;
 	private DataInputStream input;
 	private DataOutputStream output;
+	private long updateTime;
 	public Socket getSocket() {
 		return socket;
 	}
@@ -26,6 +27,12 @@ public class ClientSocket{
 	}
 	public void setOutput(DataOutputStream output) {
 		this.output = output;
+	}
+	public long getUpdateTime() {
+		return updateTime;
+	}
+	public void setUpdateTime(long updateTime) {
+		this.updateTime = updateTime;
 	}
 	
 	//input = new DataInputStream(clientSocket.getInputStream());

@@ -1,5 +1,6 @@
 package core.service;
 
+import core.model.ClientSocket;
 import core.model.RequestDetail;
 
 public interface MsgParseService {

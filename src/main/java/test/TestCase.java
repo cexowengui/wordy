@@ -1,4 +1,4 @@
-package core.main;
+package test;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -6,19 +6,23 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-public class SocketClient {
+import core.main.SocketClientTest;
+import core.util.ConfigRead;
+
+public class TestCase {
+
 	private DataOutputStream output;
 	private DataInputStream input;
 	private String clientName;
 
-	public static void main(String[] args) {
-		// 在main函数中，启动服务器的socket
-		new SocketClient().ConnectServer();
+	public static void main(String[] args) {		
+		new SocketClientTest().ConnectServer();
+		new SocketClientTest().ConnectServer();
 	}
 
 	public void ConnectServer() {
 		try {
-			Socket socket = new Socket("127.0.0.1", 10001);
+			Socket socket = new Socket("127.0.0.1", Integer.valueOf(ConfigRead.getConfigProperties("server_port")).intValue());
 			clientName = socket.getInetAddress().toString();
 			input = new DataInputStream(socket.getInputStream());
 			output = new DataOutputStream(socket.getOutputStream());
@@ -68,5 +72,4 @@ public class SocketClient {
 			}
 		}
 	}
-
 }

@@ -1,0 +1,7 @@
+1.构造数据库：按照src/main/resource下的mysql.sql脚本一条条命令执行
+
+2.在eclipse中启动服务端服务，运行src/main/java/core/main下的Server.java,debug模式方便调试
+
+3.运行test代码替代客户端，进行用例测试，需要测试什么功能就编写什么样的测试用例。一些简单的测试也可以直接早eclipse的控制台直接输入进行测试，
+比如运行src/main/java/core/main下的SocketClient.java代码，在该console下输入0+xww+ubuntu表示注册名字为xww密码为ubuntu的QQ。
+后续可以推出另外两种方式SDK和网页作为客户端

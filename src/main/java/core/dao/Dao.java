@@ -11,6 +11,7 @@ import core.model.RequestDetail;
 import core.model.ResponseDetail;
 import core.model.User;
 import core.util.DBHelper;
+import core.util.MessageConstant;
 
 public class Dao {
 	/*
@@ -30,12 +31,13 @@ public class Dao {
 		String sql = "select max(user_num) from users";
 		PreparedStatement pstmt = (PreparedStatement) conn.prepareStatement(sql);
 		ResultSet rs = pstmt.executeQuery();
-		int result;
-		if(rs.next()){
-			result = rs.getInt(1)+1;
-		}else{
-			result = 10000;
-		}		
+		
+		rs.next();
+		int result = rs.getInt(1)+1;
+		if (result < 10000) {
+			result = 10000;//初始数据库没有数据，rs.getInt(1)结果是0
+		}
+		
 		pstmt.close();
 		dbHelper.close();
 		return result;
@@ -54,6 +56,7 @@ public class Dao {
 		pstmt.executeUpdate();			
 		ResponseDetail res = new ResponseDetail();
 		res.setResult("OK");
+		res.setType(MessageConstant.RESPONSE_S2C);
 		res.setMsg(String.valueOf(userNum));
 		return res;	
 	}
