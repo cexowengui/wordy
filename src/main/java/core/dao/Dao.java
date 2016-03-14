@@ -51,9 +51,11 @@ public class Dao {
 		PreparedStatement pstmt = (PreparedStatement)conn.prepareStatement(sql);
 		pstmt.setString(1, requestDetail.getRegistryRequest().getUserName());
 		pstmt.setString(2, requestDetail.getRegistryRequest().getUserPasswd());
-		pstmt.setInt(3, userNum);
+		pstmt.setInt(3, userNum);		
+		pstmt.executeUpdate();	
+		pstmt.close();
+		dbHelper.close();
 		
-		pstmt.executeUpdate();			
 		ResponseDetail res = new ResponseDetail();
 		res.setResult("OK");
 		res.setType(MessageConstant.RESPONSE_S2C);
@@ -84,6 +86,8 @@ public class Dao {
 		}		
 		PreparedStatement pstmt = (PreparedStatement)conn.prepareStatement(sql);		
 		pstmt.executeLargeUpdate();
+		pstmt.close();
+		dbHelper.close();
 		
 		ResponseDetail res = new ResponseDetail();
 		res.setResult("OK");		

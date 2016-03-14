@@ -1,75 +1,43 @@
 package test;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.InputStreamReader;
+import java.io.IOException;
 import java.net.Socket;
+import java.sql.SQLException;
 
-import core.main.SocketClientTest;
-import core.util.ConfigRead;
+import com.mysql.jdbc.Connection;
+import com.mysql.jdbc.PreparedStatement;
+
+import core.util.DBHelper;
 
 public class TestCase {
-
-	private DataOutputStream output;
-	private DataInputStream input;
-	private String clientName;
-
-	public static void main(String[] args) {		
-		new SocketClientTest().ConnectServer();
-		new SocketClientTest().ConnectServer();
+	
+	public void CleanDatabase() throws IOException, SQLException{
+		DBHelper dbHelper = new DBHelper();
+		Connection conn = (Connection) dbHelper.getConn();
+		String sql1 = "delete from users";		
+		PreparedStatement pstmt1 = (PreparedStatement)conn.prepareStatement(sql1);
+		pstmt1.executeUpdate();
+		pstmt1.close();
+		
+		String sql2 = "delete from groups";
+		PreparedStatement pstmt2 = (PreparedStatement)conn.prepareStatement(sql2);
+		pstmt2.executeUpdate();		
+		pstmt2.close();
+		dbHelper.close();
 	}
-
-	public void ConnectServer() {
-		try {
-			Socket socket = new Socket("127.0.0.1", Integer.valueOf(ConfigRead.getConfigProperties("server_port")).intValue());
-			clientName = socket.getInetAddress().toString();
-			input = new DataInputStream(socket.getInputStream());
-			output = new DataOutputStream(socket.getOutputStream());
-
-			new readServer().start();
-			new writeServer().start();
-		} catch (Exception e) {
-			System.out.println(e.toString());
-		}
-	}
-
-	public class readServer extends Thread {
-		private Socket client;
-
-		public void run() {
-			String msg;
-			try {
-				while (true) {
-					msg = input.readUTF();
-					if (msg != null)
-						System.out.println("收到消息：【" + clientName + "】 " + msg);
-				}
-			} catch (Exception e) {
-				System.out.println(e.toString());
+	public int UserRegistry(Socket socket, String userName, String passwd) throws IOException {
+		new DataOutputStream(socket.getOutputStream()).writeUTF("1+" + userName + passwd);
+		while(true){
+			String msg = new DataInputStream(socket.getInputStream()).readUTF();
+			if (msg != null) {
+				//服务器回复消息格式为：OK+123456或者FAIL+reason 详细参考MessageConstant.java文件注释说明
+				String[] msgStrings = msg.split("\\+");
+				return Integer.parseInt(msgStrings[1]);
 			}
 		}
+		
 	}
 
-	public class writeServer extends Thread {
-		private Socket client;
-
-		public void run() {
-			try {
-				BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
-				String userInput;
-				while (true) {
-					if (stdIn.ready()) {
-						userInput = stdIn.readLine();
-						if (!userInput.equals("exit")) {
-							output.writeUTF(userInput);
-							System.out.println("已发送消息给【" + clientName + "】" + userInput);
-						}
-					}
-				}
-			} catch (Exception e) {
-				System.out.println(e.toString());
-			}
-		}
-	}
 }

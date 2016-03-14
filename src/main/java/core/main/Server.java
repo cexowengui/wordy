@@ -28,8 +28,7 @@ public class Server {
 		/*启动定时任务线程清理断开的客户端连接，虽然客户端退出会在ClientHandler的finally里面把socket关闭，但是全局变量
 		 * SocketMap里面还保留了client的socket，必须清理掉对于三分钟以上没有心跳更新的socket都清除掉
 		*/
-		new Thread( new CleanInactivateClientThread()).start();		
-		
+		new Thread( new CleanInactivateClientThread()).start();
 	}
 	
 
