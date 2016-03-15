@@ -2,11 +2,11 @@ package core.util;
 /*
  * 通讯协议定义：
  * 服务器接收到客户端的消息协议：
- * 0+user_name+passwd 申请注册用户名为user_name密码为passwd的QQ号码 回复：OK+123456或者FAIL+reason
+ * 0+user_name+passwd 申请注册用户名为user_name密码为passwd的QQ号码 回复：OK+1+123456或者FAIL+reason
  * 
  * 1+123456+passwd 用户123456用密码passwd登录
  * 
- * 2+123456+654321 QQ号码为123456的用户申请添加654321为好友 回复：OK或者FAIL+reason
+ * 2+123456+654321 QQ号码为123456的用户申请添加654321为好友 回复：1+OK+或者1+FAIL+reason
  * 
  * 3+123456+group_name 用户123456申请创建群组名为group_name的群 回复：OK+234567或者FAIL+reason
  * 

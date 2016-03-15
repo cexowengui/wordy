@@ -22,20 +22,28 @@ public class MsgProcServiceImpl implements MsgProcService {
 		MsgParseService msgParse = new MsgParseServiceImpl();
 		RequestDetail requestDetail = msgParse.parseMessage(msg);
 		switch (requestDetail.getAction()) {
-		case MessageConstant.REGISTRY:this.Registry(requestDetail);
-		case MessageConstant.LOGIN:this.Login(requestDetail, clientSocket);
-		case MessageConstant.ADD_FRIEND:this.addFriend(requestDetail, clientSocket);
-		case MessageConstant.CREATE_GROUP:this.createGroup(requestDetail, clientSocket);
-		case MessageConstant.JOIN_GROUP:this.joinGroup(requestDetail, clientSocket);
-		case MessageConstant.SEND_MESSAGE:this.sendMessage(requestDetail);
+		case MessageConstant.REGISTRY:this.Registry(requestDetail, clientSocket);break;
+		case MessageConstant.LOGIN:this.Login(requestDetail, clientSocket);break;
+		case MessageConstant.ADD_FRIEND:this.addFriend(requestDetail, clientSocket);break;
+		case MessageConstant.CREATE_GROUP:this.createGroup(requestDetail, clientSocket);break;
+		case MessageConstant.JOIN_GROUP:this.joinGroup(requestDetail, clientSocket);break;
+		case MessageConstant.SEND_MESSAGE:this.sendMessage(requestDetail);break;
+		default: break;
 					
 		}
 	}
 	
-	public ResponseDetail Registry(RequestDetail requestDetail) throws SQLException, IOException{	
+	public void Registry(RequestDetail requestDetail, ClientSocket clientSocket) throws SQLException, IOException{	
 		//将重心移到dao层去写了，如果是正式开发,判断逻辑应该落在service层，dao层不应该有太多的业务代码
-		Dao dao = new Dao();		
-		return dao.userRegistry(requestDetail);
+		try {
+			Dao dao = new Dao();		
+			ResponseDetail res = dao.userRegistry(requestDetail);		
+			clientSocket.getOutput().writeUTF(res.toString());		
+			clientSocket.getOutput().flush();			
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		}
+		
 	}
 	
 	public void Login(RequestDetail requestDetail, ClientSocket clientSocket) throws SQLException, IOException{

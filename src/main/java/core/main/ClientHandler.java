@@ -39,10 +39,12 @@ public class ClientHandler extends Thread {
 				 * 程序发送的，会 非常快，所以我们这里还是开一个处理请求的线程，本线程只负责 消息接受。这样做代价
 				 * 是服务器需要频繁创建销毁线程，所以需要使用线程池。两种方式各有利弊。
 				 */
+				
 				new MessageProcThread(clientSocket, msg).start();
+				
 			}
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			//System.out.println(e.toString());
 		} finally {
 			System.out.println("客户端断开，对应的客户端线程退出");
 			try {
@@ -78,18 +80,11 @@ class MessageProcThread extends Thread {
 	public void run() {		
 		try {
 			String clientName = this.clientSocket.getSocket().getInetAddress().toString() + 
-					this.clientSocket.getSocket().getPort();
+					this.clientSocket.getSocket().getPort();			
 			
-			// while (true) {//因为服务器只有收到客户端的请求才会回复消息，不会主动发送消息，所以这不需要while
-			this.clientSocket.getOutput().writeUTF(message + " reply");
-			this.clientSocket.getOutput().flush();
-			System.out.println("已回复消息给客户端【" + clientName + "】" + message + " reply");
-			// }
-			System.out.println("服务器已经完成客户端请求处理并回复消息给客户端，回复线程退出");
-			
-			//上面是eclipse控制台输入输出信息的简单测试，下面是真正的消息处理流程
 			MsgProcService msgProcService = new MsgProcServiceImpl();
-			msgProcService.procMessage(this.clientSocket, this.message);			
+			msgProcService.procMessage(this.clientSocket, this.message);
+			System.out.println("服务器已经完成客户端请求处理并回复消息给客户端，该处理线程退出");
 
 		} catch (Exception e) {
 			System.out.println(e.toString());

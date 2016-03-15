@@ -63,31 +63,38 @@ public class Dao {
 		return res;	
 	}
 	
-	public ResponseDetail userAddFriend(RequestDetail requestDetail) throws SQLException, IOException{
-		int userNum = requestDetail.getAddFriendRequest().getUserNum();
-		int friendNum = requestDetail.getAddFriendRequest().getFriendNum();	
-		User user = this.getUserByUserNum(userNum);
-		/*
-		 *这里需要做一些校验，为了省事，我们不考虑非常规流程，比如添加不存在的用户作为好友等		 
-		User user = this.getUserByUUID(userNum);//是否存在这个用户
-		User friend = this.getUserByUUID(friendNum);//是否存在这个用户
-		if(userNum==friendNum){}//自己不能添加自己为好友
-		*/
+	private void addFriend(User user, User friend) throws IOException, SQLException{
 		DBHelper dbHelper = new DBHelper();
 		Connection conn = (Connection) dbHelper.getConn();
 		String sql;
 		if (user.getUserFriends() == null) {
 			//避免存进去一个多余的逗号，比如",123456,234567"
-			sql = "update users set user_friends="  + friendNum + " where user_num=" 
+			sql = "update users set user_friends="  + friend.getUserNum() + " where user_num=" 
 			       + user.getUserNum();
 		} else {
-			sql = "update users set user_friends=" + user.getUserFriends() + "," 
-			           + friendNum + " where user_num=" + user.getUserNum();
+			sql = "update users set user_friends=" + "'"+ user.getUserFriends() + "," 
+			           + friend.getUserNum() + "'" + " where user_num=" + user.getUserNum();
 		}		
 		PreparedStatement pstmt = (PreparedStatement)conn.prepareStatement(sql);		
 		pstmt.executeLargeUpdate();
 		pstmt.close();
 		dbHelper.close();
+	}
+	
+	public ResponseDetail userAddFriend(RequestDetail requestDetail) throws SQLException, IOException{
+		int userNum = requestDetail.getAddFriendRequest().getUserNum();
+		int friendNum = requestDetail.getAddFriendRequest().getFriendNum();	
+		User user = this.getUserByUserNum(userNum);
+		User friend = this.getUserByUserNum(friendNum);
+		/*
+		 *这里需要做一些校验，为了省事，我们不考虑非常规流程，比如添加不存在的用户作为好友，好友拒绝接受申请等
+		 *另外这里是这样的：A添加B为好友，数据库中A的好友里面会有B的号码，同时我们也应该在B的还有里面添加A的号码		 
+		User user = this.getUserByUUID(userNum);//是否存在这个用户
+		User friend = this.getUserByUUID(friendNum);//是否存在这个用户
+		if(userNum==friendNum){}//自己不能添加自己为好友
+		*/
+		addFriend(user, friend);
+		addFriend(friend, user);
 		
 		ResponseDetail res = new ResponseDetail();
 		res.setResult("OK");		
@@ -104,11 +111,12 @@ public class Dao {
 		rs.next();
 		//while (rs.next()) {	有且只会有一个，不需要循环，在外面执行rs.next()就行了		
 			user.setId(rs.getInt(1));
-			user.setUserNum(rs.getInt(2));
-			user.setUserName(rs.getString(3));
-			user.setUserFriends(rs.getString(4));
-			user.setUserGroups(rs.getString(5));
-			user.setDescription(rs.getString(6));			
+			user.setUserName(rs.getString(2));
+			user.setUserPasswd(rs.getString(3));
+			user.setUserNum(rs.getInt(4));			
+			user.setUserFriends(rs.getString(5));
+			user.setUserGroups(rs.getString(6));
+			user.setDescription(rs.getString(7));			
 		//}
 		pstmt.close();
 		dbHelper.close();

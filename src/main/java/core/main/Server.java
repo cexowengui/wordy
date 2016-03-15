@@ -46,7 +46,8 @@ public class Server {
 				new ClientHandler(clientSocket).start();
 				//new DataInputStream(socket.getInputStream());
 			}
-
+			
+			System.out.println("服务端退出");
 			if (!socket.isClosed()) {
 				socket.close();
 			}

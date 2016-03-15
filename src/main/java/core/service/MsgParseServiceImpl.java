@@ -36,6 +36,7 @@ public class MsgParseServiceImpl implements MsgParseService {
 	}
 	
 	public RequestDetail parseUserRegistryReq(String message) {
+		System.out.println("收到用户注册的请求，message is:" + message);
 		RequestDetail.RegistryRequest registryRequest = 
 				new RequestDetail().new RegistryRequest();	
 		String[] msgStrings = message.split("\\+");

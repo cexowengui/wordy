@@ -28,6 +28,12 @@ public class User {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
+	public String getUserPasswd() {
+		return userPasswd;
+	}
+	public void setUserPasswd(String userPasswd) {
+		this.userPasswd = userPasswd;
+	}
 	public String getUserFriends() {
 		return userFriends;
 	}
@@ -51,11 +57,6 @@ public class User {
 		return String.valueOf(id) + " " + String.valueOf(userNum) 
 		+  " " + userName + " " + userFriends + " " + userGroups+ " " + description;
 	}
-	public String getUserPasswd() {
-		return userPasswd;
-	}
-	public void setUserPasswd(String userPasswd) {
-		this.userPasswd = userPasswd;
-	}
+	
 
 }
