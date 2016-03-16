@@ -108,23 +108,20 @@ public class TestMain {
 			readService read2 = new readService(mySocket2, userxww2, userxww1);
 			read2.start();
 			
-			System.out.println("两个用户的读写线程都结束了");
-			
-			
 			//不能在这里直接关闭资源，否则上面的双方读写线程刚启动就关闭了，要使用join等到双方的两个子线程结束后才可以关闭资源
 			//上面的几个线程都会在一定时间内结束的
 			//TestCase.closeResource(mySocket1);
 			//TestCase.closeResource(mySocket2);
-			//如下：
-			/*System.out.println("等待两个用户的线程结束");
-			w1.join();
-			r1.join();
-			w2.join();
-			r2.join();
-			System.out.println("两个用户的线程已经结束，关闭资源");
+			//如下：			
+			write1.join();
+			read1.join();
+			write2.join();
+			read2.join();			
+			System.out.println("两个用户的读写线程都结束了,关闭相关资源");
 			TestCase.closeResource(mySocket1);
-			TestCase.closeResource(mySocket2);*/
-			//或者挪到ReadWriteThread里面去关闭这些接口
+			TestCase.closeResource(mySocket2);			
+			System.out.println("main end");
+			
 			
 		} catch (Exception e) {
 			System.out.println(e.toString());
