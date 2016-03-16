@@ -28,6 +28,7 @@ public class MsgProcServiceImpl implements MsgProcService {
 		case MessageConstant.CREATE_GROUP:this.createGroup(requestDetail, clientSocket);break;
 		case MessageConstant.JOIN_GROUP:this.joinGroup(requestDetail, clientSocket);break;
 		case MessageConstant.SEND_MESSAGE:this.sendMessage(requestDetail);break;
+		case MessageConstant.HEART_BEAT:this.updateHeartBeat(requestDetail);break;
 		default: break;
 					
 		}
@@ -49,6 +50,8 @@ public class MsgProcServiceImpl implements MsgProcService {
 	public void Login(RequestDetail requestDetail, ClientSocket clientSocket) throws SQLException, IOException{
 		ResponseDetail res = new ResponseDetail();
 		RequestDetail.LoginRequest loginRequest = requestDetail.getLoginRequest();
+		res.setResult("OK");
+		res.setType(MessageConstant.RESPONSE_S2C);
 		Dao dao = new Dao();
 		User user = dao.getUserByUserNum(loginRequest.getUserNum());
 		if(user == null){
@@ -58,17 +61,17 @@ public class MsgProcServiceImpl implements MsgProcService {
 		}
 		if(!user.getUserPasswd().equals(loginRequest.getPasswd())){
 			res.setResult("FAIL");
-			res.setMsg("密码不正确");			
+			String reason = user.getUserName() + "的密码不正确。请求的密码是:"+loginRequest.getPasswd() + 
+					";数据库的密码是:"+user.getUserPasswd();
+			res.setMsg(reason);			
 		}
 		
 		//将登陆成功的socket存放入全局的静态变量中，后续其它线程会用的，必须放在一个所有线程都可以取到的地方；
 		//客户端A必须执行这个方法才会把连接放入全局变量中，也只有这样才可以接受他人消息，否则B给A发送消息，无法
 		//从该全局变量中找到对应的socket，就无法把消息发送给A，如果后续增加了消息持久化功能后，那么这个消息会
 		//被持久化保存起来，直到A下一次上线后才会推送过去。
-		SocketMap.userNumMap.put(requestDetail.getLoginRequest().getUserNum(), clientSocket);
+		SocketMap.userNumSocketMap.put(requestDetail.getLoginRequest().getUserNum(), clientSocket);	
 		
-		res.setResult("OK");
-		res.setType(MessageConstant.RESPONSE_S2C);
 		clientSocket.getOutput().writeUTF(res.toString());
 		clientSocket.getOutput().flush();			
 	}
@@ -88,9 +91,21 @@ public class MsgProcServiceImpl implements MsgProcService {
 		//return null;		
 	}
 	
+	public void updateHeartBeat (RequestDetail requestDetail) throws IOException{
+		ClientSocket clientSocket = SocketMap.userNumSocketMap.get(
+				requestDetail.getUpdateHeartBeatRequest().getUserNum());
+		//不用客户端请求发过来的时间数据，直接获取服务器本地的时间
+		clientSocket.setUpdateTime(System.currentTimeMillis());
+		SocketMap.userNumSocketMap.put(requestDetail.getUpdateHeartBeatRequest().getUserNum(), 
+				clientSocket);
+		
+		//不需要回复消息给客户端		
+		
+	}
+	
 	public void sendMessage(RequestDetail requestDetail) throws IOException{	
 		SendMessageRequest sendMsgReq = requestDetail.getSendMessageRequest();
-		ClientSocket recvClient = SocketMap.userNumMap.get(sendMsgReq.getMessage().getTo());
+		ClientSocket recvClient = SocketMap.userNumSocketMap.get(sendMsgReq.getMessage().getTo());
 		if(recvClient == null){
 			//查找不到接收方的socket，则认为接收方没连接上来（其实有可能已经连接到了服务器，但是没有login，因为把socket存储到
 			//全局变量中是在Login方法中做的），那么就需要将这个消息持久化

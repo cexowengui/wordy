@@ -19,6 +19,7 @@ public class MsgParseServiceImpl implements MsgParseService {
 		case MessageConstant.CREATE_GROUP:return parseCreateGroupReq(message);
 		case MessageConstant.JOIN_GROUP:return parseJoinGroupReq(message);
 		case MessageConstant.SEND_MESSAGE:return parseSendMessageReq(message);
+		case MessageConstant.HEART_BEAT:return parseUPdateHeartbeatReq(message);
 		default:return null;
 		}		
 	}
@@ -85,6 +86,19 @@ public class MsgParseServiceImpl implements MsgParseService {
 		requestDetail.setAddGroupRequest(addGroupRequest);
 		requestDetail.setAction(Integer.valueOf(msgStrings[0]).intValue());
 		return requestDetail;
+	}
+	
+	public RequestDetail parseUPdateHeartbeatReq (String message) {
+		RequestDetail.UpdateHeartBeatRequest updateHeartBeatRequest = 
+				new RequestDetail().new UpdateHeartBeatRequest();
+		String[] msgStrings = message.split("\\+");
+		updateHeartBeatRequest.setUserNum(Integer.valueOf(msgStrings[1]).intValue());
+		
+		
+		RequestDetail requestDetail = new RequestDetail();
+		requestDetail.setUpdateHeartBeatRequest(updateHeartBeatRequest);
+		requestDetail.setAction(Integer.valueOf(msgStrings[0]).intValue());
+		return requestDetail;		
 	}
 
 	public RequestDetail parseSendMessageReq(String message) {

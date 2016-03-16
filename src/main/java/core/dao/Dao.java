@@ -87,7 +87,7 @@ public class Dao {
 		User user = this.getUserByUserNum(userNum);
 		User friend = this.getUserByUserNum(friendNum);
 		/*
-		 *这里需要做一些校验，为了省事，我们不考虑非常规流程，比如添加不存在的用户作为好友，好友拒绝接受申请等
+		 *这里需要做一些校验，为了省事，我们不考虑非常规流程，比如添加不存在的用户作为好友，好友拒绝接受申请，已经是好友了等
 		 *另外这里是这样的：A添加B为好友，数据库中A的好友里面会有B的号码，同时我们也应该在B的还有里面添加A的号码		 
 		User user = this.getUserByUUID(userNum);//是否存在这个用户
 		User friend = this.getUserByUUID(friendNum);//是否存在这个用户
@@ -97,7 +97,8 @@ public class Dao {
 		addFriend(friend, user);
 		
 		ResponseDetail res = new ResponseDetail();
-		res.setResult("OK");		
+		res.setResult("OK");
+		res.setType(MessageConstant.RESPONSE_S2C);
 		return res;	
 	}
 

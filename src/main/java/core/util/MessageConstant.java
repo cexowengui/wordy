@@ -27,6 +27,7 @@ public class MessageConstant {
 	public static final int CREATE_GROUP = 3;//创建群组
 	public static final int JOIN_GROUP = 4;//加群
 	public static final int SEND_MESSAGE = 5;//发送消息
+	public static final int HEART_BEAT = 6;//心跳
 	
 	public static final int POINT_MESSAGE_TYPE = 1;//点对点消息
 	public static final int GOURP_MESSAGE_TYPE = 2;//群发消息

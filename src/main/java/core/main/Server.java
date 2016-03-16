@@ -16,10 +16,6 @@ import core.util.ConfigRead;
  * 客户端的console无法输入第二行数据，关闭重启就会好，暂时不知道什么问题
  */
 
-
-
-
-
 public class Server {	
 
 	public static void main(String[] args) {		

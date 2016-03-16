@@ -91,6 +91,25 @@ package core.model;
 
 			
 		}
+	 
+	 public class UpdateHeartBeatRequest{
+		 private int userNum;
+		 private long updateTime;
+		 
+		public int getUserNum() {
+			return userNum;
+		}
+		public void setUserNum(int userNum) {
+			this.userNum = userNum;
+		}
+		public long getUpdateTime() {
+			return updateTime;
+		}
+		public void setUpdateTime(long updateTime) {
+			this.updateTime = updateTime;
+		}
+		 
+	 }
 
 	 public class SendMessageRequest {
 			
@@ -112,6 +131,7 @@ package core.model;
 	private CreateGroupRequest createGroupRequest;
 	private AddGroupRequest addGroupRequest;
 	private SendMessageRequest sendMessageRequest;
+	private UpdateHeartBeatRequest updateHeartBeatRequest;
 	
 	public int getAction() {
 		return action;
@@ -154,6 +174,12 @@ package core.model;
 	}
 	public void setLoginRequest(LoginRequest loginRequest) {
 		this.loginRequest = loginRequest;
+	}
+	public UpdateHeartBeatRequest getUpdateHeartBeatRequest() {
+		return updateHeartBeatRequest;
+	}
+	public void setUpdateHeartBeatRequest(UpdateHeartBeatRequest updateHeartBeatRequest) {
+		this.updateHeartBeatRequest = updateHeartBeatRequest;
 	}
 
 }
