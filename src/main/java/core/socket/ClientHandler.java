@@ -5,9 +5,12 @@ import java.io.DataOutputStream;
 import java.net.Socket;
 
 import core.model.ClientSocket;
+import core.model.RequestDetail;
+import core.service.MsgParseService;
 import core.service.MsgProcService;
 import core.service.MsgProcServiceImpl;
 import core.service.SocketMap;
+import core.service.socket.MsgParseServiceSocketImpl;
 
 import java.io.IOException;
 
@@ -80,10 +83,13 @@ class MessageProcThread extends Thread {
 	public void run() {		
 		try {
 			String clientName = this.clientSocket.getSocket().getInetAddress().toString() + 
-					this.clientSocket.getSocket().getPort();			
+					this.clientSocket.getSocket().getPort();
+			
+			MsgParseService msgParse = new MsgParseServiceSocketImpl();
+			RequestDetail requestDetail = msgParse.parseMessage(this.message);
 			
 			MsgProcService msgProcService = new MsgProcServiceImpl();
-			msgProcService.procMessage(this.clientSocket, this.message);
+			msgProcService.procMessage(this.clientSocket, requestDetail);
 			System.out.println("服务器已经完成客户端请求处理并回复消息给客户端，该处理线程退出");
 
 		} catch (Exception e) {

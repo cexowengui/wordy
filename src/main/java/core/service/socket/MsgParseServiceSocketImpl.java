@@ -1,10 +1,11 @@
-package core.service;
+package core.service.socket;
 
 import core.model.Message;
 import core.model.RequestDetail;
+import core.service.MsgParseService;
 import core.util.MessageConstant;
 
-public class MsgParseServiceImpl implements MsgParseService {
+public class MsgParseServiceSocketImpl implements MsgParseService {
 	/*
 	 * 通讯协议定义：详细参见 core.util.MessageConstant.java内解释
 	 
