@@ -1,4 +1,4 @@
-package core.main;
+package core.socket;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

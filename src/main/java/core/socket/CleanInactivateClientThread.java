@@ -1,4 +1,4 @@
-package core.main;
+package core.socket;
 
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
