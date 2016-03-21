@@ -1,4 +1,4 @@
-package core.service;
+package core.service.socket;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -11,22 +11,20 @@ import core.dao.Dao;
 import core.model.ClientSocket;
 import core.model.RequestDetail;
 import core.model.RequestDetail.SendMessageRequest;
-import core.service.socket.MsgParseServiceSocketImpl;
+import core.service.MsgParseService;
+import core.service.MsgParseServiceImpl;
+import core.service.SocketMap;
 import core.model.ResponseDetail;
 import core.model.User;
 import core.util.MessageConstant;
 
-public class MsgProcServiceImpl implements MsgProcService {
+public class MsgProcSocketServiceImpl implements MsgProcSocketService {
 
 	@Override
-	public void procMessage(ClientSocket clientSocket, RequestDetail requestDetail) throws SQLException, IOException {
-		//下面两句挪到ClientHandler.java里面去了，因为后面发现要实现socket和http两种方式共用一个MsgProcService，但是
-		//两种方式的消息解析确又是不一样的，所以这里就不能有下面两句，就是底层不能调用上层，而应该由上层调用底层，这样才可以实现多
-		//样化的上层实现。编程思想一般就是：一种上层要实现多种底层，那么就需要在配置文件配置到底使用那种方式；多种上层要使用同一个
-		//底层，那么底层就不能调用某一个上层的代码；
-		//MsgParseService msgParse = new MsgParseServiceSocketImpl();
-		//RequestDetail requestDetail = msgParse.parseMessage(msg);
+	public void procMessage(ClientSocket clientSocket, String msg) throws SQLException, IOException {
 		
+		MsgParseService msgParse = new MsgParseServiceImpl();
+		RequestDetail requestDetail = msgParse.parseMessage(msg);		
 		switch (requestDetail.getAction()) {
 		case MessageConstant.REGISTRY:this.Registry(requestDetail, clientSocket);break;
 		case MessageConstant.LOGIN:this.Login(requestDetail, clientSocket);break;

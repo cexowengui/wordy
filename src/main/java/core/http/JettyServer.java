@@ -21,8 +21,20 @@ public class JettyServer {
 		context.setContextPath("/message");
 
 		server.setHandler(context);
-		TestServlet a = new TestServlet();
-		context.addServlet(new ServletHolder(new TestServlet()), "/hello");
+		
+		context.addServlet(new ServletHolder(new TestServlet()), "/test");		
+		context.addServlet(new ServletHolder(new UserRegistryServlet()), "/userRegistry");		
+		context.addServlet(new ServletHolder(new UserLoginServlet()), "/login");
+		context.addServlet(new ServletHolder(new UserLoginServlet()), "/addFriend");
+		context.addServlet(new ServletHolder(new UserLoginServlet()), "/groupRegistry");
+		context.addServlet(new ServletHolder(new UserLoginServlet()), "/addGroup");
+		context.addServlet(new ServletHolder(new UserLoginServlet()), "/sendMessage");
+		context.addServlet(new ServletHolder(new UserLoginServlet()), "/heartBeat");
+		
+		//context.addServlet(new ServletHolder(new UserLoginServlet()), "/heartBeat");
+		//context.addServlet(new ServletHolder(new UserLoginServlet()), "/heartBeat");
+		//context.addServlet(new ServletHolder(new UserLoginServlet()), "/heartBeat");
+		
 
 		server.start();
 		server.join();

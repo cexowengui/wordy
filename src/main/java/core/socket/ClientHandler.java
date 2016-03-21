@@ -7,10 +7,10 @@ import java.net.Socket;
 import core.model.ClientSocket;
 import core.model.RequestDetail;
 import core.service.MsgParseService;
-import core.service.MsgProcService;
-import core.service.MsgProcServiceImpl;
+import core.service.MsgParseServiceImpl;
 import core.service.SocketMap;
-import core.service.socket.MsgParseServiceSocketImpl;
+import core.service.socket.MsgProcSocketService;
+import core.service.socket.MsgProcSocketServiceImpl;
 
 import java.io.IOException;
 
@@ -85,11 +85,11 @@ class MessageProcThread extends Thread {
 			String clientName = this.clientSocket.getSocket().getInetAddress().toString() + 
 					this.clientSocket.getSocket().getPort();
 			
-			MsgParseService msgParse = new MsgParseServiceSocketImpl();
-			RequestDetail requestDetail = msgParse.parseMessage(this.message);
+			//MsgParseService msgParse = new MsgParseServiceSocketImpl();
+			//RequestDetail requestDetail = msgParse.parseMessage(this.message);
 			
-			MsgProcService msgProcService = new MsgProcServiceImpl();
-			msgProcService.procMessage(this.clientSocket, requestDetail);
+			MsgProcSocketService msgProcSocketService = new MsgProcSocketServiceImpl();
+			msgProcSocketService.procMessage(this.clientSocket, message);
 			System.out.println("服务器已经完成客户端请求处理并回复消息给客户端，该处理线程退出");
 
 		} catch (Exception e) {

@@ -1,8 +1,16 @@
 package core.model;
+
+import java.io.Serializable;
+
 /*
  * 按照数据库的表结构定义对象model
  */
-public class User {
+public class User implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int id;
 	private int userNum;
 	private String userName;

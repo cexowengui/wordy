@@ -1,6 +1,7 @@
 package test;
 
 import java.io.BufferedReader;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import core.dao.Dao;
 import core.model.ClientSocket;
 import core.model.User;
 import core.util.ConfigRead;
+
 
 public class TestMain {
 
@@ -38,7 +40,8 @@ public class TestMain {
 			// this.TestRegistry();
 			// this.TestLogin();
 			// this.TestAddFriend();
-			this.TestTalk();
+			//this.TestTalk();
+			this.getUserDetail();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -127,5 +130,9 @@ public class TestMain {
 			System.out.println(e.toString());
 		}
 
+	}
+	
+	public void getUserDetail(){
+		HttpGet httpget = new HttpGet("https://localhost:8443/myDemo/Ajax/serivceJ.action"); 
 	}
 }
