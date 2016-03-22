@@ -3,6 +3,9 @@ package core.socket;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import core.model.ClientSocket;
 import core.model.RequestDetail;
@@ -26,13 +29,14 @@ public class ClientHandler extends Thread {
 		String msg;
 		DataInputStream input = null;
 		DataOutputStream output = null;
+		BlockingQueue<String> queue = new LinkedBlockingQueue<String>(1000);//限制最大消息数，通过配置文件配置最好
 
 		try {
 			String clientName = this.clientSocket.getSocket().getInetAddress().toString();			
 			input = this.clientSocket.getInput();
 			output = this.clientSocket.getOutput();				
 			while ((msg = input.readUTF()) != null) {
-				System.out.println("收到消息：【" + clientName + "】 " + msg);
+				System.out.println("服务器收到客户端的消息：【" + clientName + "】 " + msg);
 				/* 
 				 * 开启一个消息处理和回复线程，把接收到的消息扔给该线程的子线程去处理
 				 * 这里已经是一个处理某个客户端的子线程了，为什么这里还需要开一个子线程的子线程？因为这里接收到了
@@ -43,7 +47,20 @@ public class ClientHandler extends Thread {
 				 * 是服务器需要频繁创建销毁线程，所以需要使用线程池。两种方式各有利弊。
 				 */
 				
-				new MessageProcThread(clientSocket, msg).start();
+				/*
+				 * 这里添加消息QoS功能，就是限制消息发送者的发送速度，我们需要一个同步阻塞队列来控制，而不能采用
+				 * 非阻塞队列，因为我们想要的结果是如果队列满，那么接受线程就塞不进去了，等待队列有空间；
+				 * 如果队列空，MessageProcThread线程取不出来消息，也等待，而非阻塞队列如果队列存不进去就抛异常，
+				 * 队列空取不到数据也抛异常，不是我们想要的，这里使用LinkedBlockingQueue，限制1000消息数，即
+				 * 如果处理的速度赶不上接收的速度，那么最多为每个客户端缓存1000个消息				 * 
+				 */
+				/*
+				 * 存到队列尾巴，如果满了的话，这句代码会一直阻塞住，等待队列有空间，实际上队列永远为空
+				 * 因为接收到一个消息就开启一个线程，所以不可能有存货，这里只是为了演示QoS的原理；当多个
+				 * 接收线程对应一个或多个处理线程并存时，这个时候中间的阻塞队列就有很大作用了
+				 */
+				queue.put(msg);
+				new MessageProcThread(clientSocket, queue).start();
 				
 			}
 		} catch (Exception e) {
@@ -73,11 +90,11 @@ public class ClientHandler extends Thread {
 
 class MessageProcThread extends Thread {
 	private ClientSocket clientSocket;
-	private String message;
+	private BlockingQueue<String> queue;
 
-	public MessageProcThread(ClientSocket client, String message) {
+	public MessageProcThread(ClientSocket client, BlockingQueue<String> queue) {
 		this.clientSocket = client;		
-		this.message = message;
+		this.queue = queue;
 	}
 
 	public void run() {		
@@ -89,7 +106,7 @@ class MessageProcThread extends Thread {
 			//RequestDetail requestDetail = msgParse.parseMessage(this.message);
 			
 			MsgProcSocketService msgProcSocketService = new MsgProcSocketServiceImpl();
-			msgProcSocketService.procMessage(this.clientSocket, message);
+			msgProcSocketService.procMessage(this.clientSocket, queue.take());//取出队列头消息，如果为空则等待
 			System.out.println("服务器已经完成客户端请求处理并回复消息给客户端，该处理线程退出");
 
 		} catch (Exception e) {
