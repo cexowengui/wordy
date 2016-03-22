@@ -8,9 +8,11 @@ import org.eclipse.jetty.servlet.ServletHolder;
 
 import com.example.jetty.FirstServlet;
 
+import core.util.ConfigRead;
+
 public class JettyServer {
 	public static void main(String[] args) throws Exception {
-		Server server = new Server(8080);
+		Server server = new Server(Integer.parseInt(ConfigRead.getConfigProperties("jetty_port")));
 
 		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
@@ -25,15 +27,15 @@ public class JettyServer {
 		context.addServlet(new ServletHolder(new TestServlet()), "/test");		
 		context.addServlet(new ServletHolder(new UserRegistryServlet()), "/userRegistry");		
 		context.addServlet(new ServletHolder(new UserLoginServlet()), "/login");
-		context.addServlet(new ServletHolder(new UserLoginServlet()), "/addFriend");
-		context.addServlet(new ServletHolder(new UserLoginServlet()), "/groupRegistry");
-		context.addServlet(new ServletHolder(new UserLoginServlet()), "/addGroup");
-		context.addServlet(new ServletHolder(new UserLoginServlet()), "/sendMessage");
-		context.addServlet(new ServletHolder(new UserLoginServlet()), "/heartBeat");
+		context.addServlet(new ServletHolder(new UserAddFriendServlet()), "/addFriend");
+		context.addServlet(new ServletHolder(new UserCreateGroupServlet()), "/groupRegistry");
+		context.addServlet(new ServletHolder(new UserJoinGroupServlet()), "/addGroup");
+		context.addServlet(new ServletHolder(new UserSendMessageServlet()), "/sendMessage");
+		context.addServlet(new ServletHolder(new UserHeartBeatServlet()), "/heartBeat");
 		
-		//context.addServlet(new ServletHolder(new UserLoginServlet()), "/heartBeat");
-		//context.addServlet(new ServletHolder(new UserLoginServlet()), "/heartBeat");
-		//context.addServlet(new ServletHolder(new UserLoginServlet()), "/heartBeat");
+		context.addServlet(new ServletHolder(new GetUserDetailServlet()), "/user");
+		context.addServlet(new ServletHolder(new GetGroupDetailServlet()), "/group");
+		context.addServlet(new ServletHolder(new GetUserSocketMapServlet()), "/socket");
 		
 
 		server.start();

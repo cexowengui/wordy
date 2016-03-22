@@ -1,14 +1,12 @@
 package core.service.socket;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.rmi.registry.Registry;
 import java.sql.SQLException;
-
-import org.hamcrest.core.Is;
+import java.util.List;
 
 import core.dao.Dao;
 import core.model.ClientSocket;
+import core.model.Message;
 import core.model.RequestDetail;
 import core.model.RequestDetail.SendMessageRequest;
 import core.service.MsgParseService;
@@ -16,6 +14,8 @@ import core.service.MsgParseServiceImpl;
 import core.service.SocketMap;
 import core.model.ResponseDetail;
 import core.model.User;
+import core.persistence.api.PersistenceAPI;
+import core.persistence.api.PersistenceAPIImpl;
 import core.util.MessageConstant;
 
 public class MsgProcSocketServiceImpl implements MsgProcSocketService {
@@ -60,8 +60,7 @@ public class MsgProcSocketServiceImpl implements MsgProcSocketService {
 		User user = dao.getUserByUserNum(loginRequest.getUserNum());
 		if(user == null){
 			res.setResult("FAIL");
-			res.setMsg("用户不存在");
-			
+			res.setMsg("用户不存在");			
 		}
 		if(!user.getUserPasswd().equals(loginRequest.getPasswd())){
 			res.setResult("FAIL");
@@ -77,7 +76,12 @@ public class MsgProcSocketServiceImpl implements MsgProcSocketService {
 		SocketMap.userNumSocketMap.put(requestDetail.getLoginRequest().getUserNum(), clientSocket);	
 		
 		clientSocket.getOutput().writeUTF(res.toString());
-		clientSocket.getOutput().flush();			
+		clientSocket.getOutput().flush();
+		
+		//下面的代码是消息持久化的处理，刚登陆上来的用户肯定有很多离线的消息需要接受，包括用户消息和群消息，
+		//但是核心功能都没有实现,框架都有了
+		offlineMessageProc(requestDetail, clientSocket);
+		
 	}
 	
 	public void addFriend(RequestDetail requestDetail, ClientSocket clientSocket) throws SQLException, IOException{
@@ -115,7 +119,10 @@ public class MsgProcSocketServiceImpl implements MsgProcSocketService {
 			//全局变量中是在Login方法中做的），那么就需要将这个消息持久化
 			/*
 			 * 持久化的代码逻辑
+			 *
 			 */
+			PersistenceAPI persistent = new PersistenceAPIImpl();
+			persistent.saveMessage(sendMsgReq.getMessage());
 		}else{
 			//直接发送给对方
 			ResponseDetail responseDetail = new ResponseDetail();
@@ -128,6 +135,23 @@ public class MsgProcSocketServiceImpl implements MsgProcSocketService {
 		
 				
 	} 
+	
+	public void offlineMessageProc(RequestDetail requestDetail, ClientSocket clientSocket) throws IOException{
+		PersistenceAPI persistenceAPI = new PersistenceAPIImpl();
+		
+		//接受用户和群发过来的离线消息		
+		List<Message> msgList = persistenceAPI.getMessage(requestDetail.getLoginRequest().getUserNum());
+		//把msgList里面的内容发给这个登陆者
+		for(Message msg: msgList){
+			clientSocket.getOutput().writeUTF(msg.getContent());
+			clientSocket.getOutput().flush();
+		}
+		
+		//删除已经接收的消息，这个功能比较简单，只要把该时刻之前的消息全部删除掉就可以了，但是群消息不能删除，
+		//因为可能还有群成员没接收。
+		persistenceAPI.deleteMessage(requestDetail.getLoginRequest().getUserNum());
+		
+	}
 
 
 }

@@ -1,23 +1,15 @@
 package core.service.http;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.rmi.registry.Registry;
 import java.sql.SQLException;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.hamcrest.core.Is;
-
 import core.dao.Dao;
-import core.model.ClientSocket;
 import core.model.RequestDetail;
-import core.model.RequestDetail.SendMessageRequest;
 import core.service.MsgParseService;
 import core.service.MsgParseServiceImpl;
-import core.service.SocketMap;
 import core.model.ResponseDetail;
-import core.model.User;
 import core.util.MessageConstant;
 
 public class MsgProcHttpServiceImpl implements MsgProcHttpService {

@@ -10,11 +10,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
+import core.dao.Dao;
 import core.model.User;
+import core.service.SocketMap;
 import core.service.http.MsgProcHttpService;
 import core.service.http.MsgProcHttpServiceImpl;
 import core.service.socket.MsgProcSocketService;
 import core.service.socket.MsgProcSocketServiceImpl;
+import core.util.JsonUtil;
 
 /*
  * 定义几个http api：
@@ -29,10 +32,10 @@ import core.service.socket.MsgProcSocketServiceImpl;
  * 心跳：http://127.0.0.1:8080/message/heartBeat?userNum=123456
  * 
  * 再提供一些接口：这些接口在socket那边是没有的，那边太麻烦了
- * 查询用户信息api：http://127.0.0.1:8080/message/user/123456  查询123456这个用户的信息
- * 查询群组信息api: http://127.0.0.1:8080/message/group/123456  查询123456这个组的信息 * 
+ * 查询用户信息api：http://127.0.0.1:8080/message/user?userNum=123456  查询123456这个用户的信息
+ * 查询群组信息api: http://127.0.0.1:8080/message/group?groupNum=123456  查询123456这个组的信息 * 
  * 查询服务器当前socket列表SocketMap.userNumSocketMap是否保存了某用户的socket：
- * http://127.0.0.1:8080/message/socket/123456  查询123456这个用户是否在服务器所保存的socket中
+ * http://127.0.0.1:8080/message/socket?userNum=123456  查询123456这个用户是否在服务器所保存的socket中
  * 
  * 
  */
@@ -144,23 +147,39 @@ class UserHeartBeatServlet extends HttpServlet {
 }
 
 class GetUserDetailServlet extends HttpServlet {
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		HttpServletResponse res = ResponseWrapper.getWrapResponse(response);
-
+		int userNum = Integer.parseInt(request.getParameter("userNum"));
+		try {
+			User user = new Dao().getUserByUserNum(userNum);
+			//这里有两种方法，一种是对象序列化然后远程传输，到那边再反序列化，
+			//第二种是以json字符串的格式传输，到那边再把json转换成对象
+			//这里使用第二种
+			response.getWriter().print(JsonUtil.ObjectToJson(user));
+			
+		} catch (SQLException e) {			
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
 
 class GetGroupDetailServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 		HttpServletResponse res = ResponseWrapper.getWrapResponse(response);
-
 	}
 }
 
 class GetUserSocketMapServlet extends HttpServlet {
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		HttpServletResponse res = ResponseWrapper.getWrapResponse(response);
-
+		int userNum = Integer.parseInt(request.getParameter("userNum"));
+		if (SocketMap.userNumSocketMap.get(userNum) != null) {
+			response.getWriter().println("OK");
+		} else {
+			response.getWriter().println("FAIL");
+		}
 	}
 }
 
@@ -168,6 +187,11 @@ class TestServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String name = request.getParameter("name");
 		String password = request.getParameter("password");
+		String path = request.getRequestURI();
+		path = request.getScheme();
+		path = request.getQueryString();
+		path = request.getServletPath();
+		path = request.getServletPath();
 
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
@@ -191,7 +215,12 @@ class TestServlet extends HttpServlet {
 		//response.getWriter().println(studentJSONObject.toString());
 		User user = new User();
 		user.setId(123);
-		response.getWriter().print(user);
+		try {
+			response.getWriter().print(JsonUtil.ObjectToJson(user));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 }

@@ -25,6 +25,7 @@ public class Server {
 		 * SocketMap里面还保留了client的socket，必须清理掉对于三分钟以上没有心跳更新的socket都清除掉
 		*/
 		new Thread( new CleanInactivateClientThread()).start();
+		new Thread(new CleanOverdueMessageThread()).start();
 	}
 	
 

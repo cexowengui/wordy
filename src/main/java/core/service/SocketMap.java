@@ -15,6 +15,6 @@ import core.model.ClientSocket;
 
 public class SocketMap {
 
-public static ConcurrentMap<Integer, ClientSocket> userNumSocketMap = new ConcurrentHashMap<>();
+public static ConcurrentMap<Integer, ClientSocket> userNumSocketMap = new ConcurrentHashMap<Integer, ClientSocket>();
 
 }
