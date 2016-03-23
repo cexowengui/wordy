@@ -5,6 +5,8 @@ import java.io.DataOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import core.model.ClientSocket;
 import core.util.ConfigRead;
@@ -18,7 +20,8 @@ import core.util.ConfigRead;
 
 public class Server {	
 
-	public static void main(String[] args) {		
+	public static void main(String[] args) {
+		
 		new Server().OpenServer();
 		
 		/*启动定时任务线程清理断开的客户端连接，虽然客户端退出会在ClientHandler的finally里面把socket关闭，但是全局变量
@@ -35,6 +38,14 @@ public class Server {
 
 	public void OpenServer() {
 		try {
+			/*掌握四种线程池的用法和原理
+			 * newCachedThreadPool：线程池为无限大，当执行第二个任务时第一个任务已经完成，会复用执行第一个任务的线程，而不用每次新建线程。
+			 * newFixedThreadPool：创建一个定长线程池，可控制线程最大并发数，超出的线程会在队列中等待。
+			 * newScheduledThreadPool：创建一个定长线程池，支持定时及周期性任务执行。
+			 * newSingleThreadExecutor：创建一个单线程化的线程池，它只会用唯一的工作线程来执行任务，保证所有任务按照指定顺序(FIFO, LIFO, 优先级)执行。
+			 * 
+			 */
+			ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
 			ServerSocket server = new ServerSocket(Integer.valueOf(ConfigRead.getConfigProperties("server_port")).intValue());
 			Socket socket;
 			while ((socket = server.accept()) != null) {
@@ -44,8 +55,11 @@ public class Server {
 				clientSocket.setInput(new DataInputStream(socket.getInputStream()));
 				clientSocket.setOutput(new DataOutputStream(socket.getOutputStream()));
 				clientSocket.setUpdateTime(System.currentTimeMillis());
-				new ClientHandler(clientSocket).start();
-				//new DataInputStream(socket.getInputStream());
+				
+				//来一个客户端，就开启一个处理线程，比如apache就是这样，注释掉下面这行，采用线程池来处理，比如nginx
+				//new ClientHandler(clientSocket).start();
+				cachedThreadPool.execute(new ClientHandler(clientSocket));
+				
 			}
 			
 			System.out.println("服务端退出");
